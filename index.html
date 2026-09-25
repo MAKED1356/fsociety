@@ -184,66 +184,34 @@
 ⠀⠀⠀⠀⠀⣿⣿⡿⠀⠀⠘⠿⢿⣿⡿⠟⠁⠀⠘⠿⣿⣿⠿⠋⠀⠀⠀⠹⢿⣿⡿⠇⢸⣿⣿⠃⣿⣿⣿⣿⣿⠀⠀⣾⣿⣿⠀⠀⠀⢠⣿⣿⡇⠀⠀⠀⠀⠀⠀⠀
         </pre>
     </div>
-    <button id="soundBtn" style="
-    position: fixed;
-    bottom: 20px;
-    right: 20px;
-    z-index: 9999;
-    background: #0d0d0d;
-    color: #00ff41;
-    border: 1px solid #00ff41;
-    padding: 10px 15px;
-    font-family: 'Courier New', monospace;
-    cursor: pointer;
-    letter-spacing: 1px;
-">
-    🔊 ВКЛ ЗВУК
-</button>
-
 <script>
 let audioCtx = null;
-let nodes = [];
-let isPlaying = false;
+let started = false;
 
-document.getElementById('soundBtn').addEventListener('click', () => {
-    if (!audioCtx) {
-        audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-    }
+function startDrone() {
+    if (started) return;
+    started = true;
+
+    audioCtx = new (window.AudioContext || window.webkitAudioContext)();
     audioCtx.resume();
 
-    const btn = document.getElementById('soundBtn');
-
-    if (isPlaying) {
-        nodes.forEach(n => {
-            try { n.stop(); } catch(e) {}
-        });
-        nodes = [];
-        isPlaying = false;
-        btn.textContent = '🔊 ВКЛ ЗВУК';
-        return;
-    }
-
-    // --- ГЕНЕРАТОР РЫЧАНИЯ ---
     const master = audioCtx.createGain();
-    master.gain.value = 0.035; // общая громкость (очень тихо)
+    master.gain.value = 0.035;
     master.connect(audioCtx.destination);
 
-    // Два расстроенных пилообразных осциллятора — дают "гул"
     const osc1 = audioCtx.createOscillator();
     osc1.type = 'sawtooth';
-    osc1.frequency.value = 55; // нота A1, низкий гул
+    osc1.frequency.value = 55;
 
     const osc2 = audioCtx.createOscillator();
     osc2.type = 'sawtooth';
-    osc2.frequency.value = 55.7; // чуть выше — создаёт "биение"
+    osc2.frequency.value = 55.7;
 
-    // Фильтр низких частот — убирает лишний писк
     const filter = audioCtx.createBiquadFilter();
     filter.type = 'lowpass';
     filter.frequency.value = 180;
     filter.Q.value = 2;
 
-    // Искажение — делает звук "грязным", рычащим
     const shaper = audioCtx.createWaveShaper();
     function makeDistortionCurve(amount) {
         const k = amount;
@@ -259,16 +227,14 @@ document.getElementById('soundBtn').addEventListener('click', () => {
     shaper.curve = makeDistortionCurve(50);
     shaper.oversample = '4x';
 
-    // LFO — низкочастотная модуляция, создаёт "вибрацию"
     const lfo = audioCtx.createOscillator();
     lfo.type = 'sine';
-    lfo.frequency.value = 8; // 8 Гц — как дрожь
+    lfo.frequency.value = 8;
     const lfoGain = audioCtx.createGain();
-    lfoGain.gain.value = 0.015; // глубина вибрации
+    lfoGain.gain.value = 0.015;
     lfo.connect(lfoGain);
-    lfoGain.connect(master.gain); // модулирует громкость
+    lfoGain.connect(master.gain);
 
-    // Соединяем всё
     osc1.connect(filter);
     osc2.connect(filter);
     filter.connect(shaper);
@@ -277,11 +243,11 @@ document.getElementById('soundBtn').addEventListener('click', () => {
     osc1.start();
     osc2.start();
     lfo.start();
+}
 
-    nodes = [osc1, osc2, lfo];
-    isPlaying = true;
-    btn.textContent = '🔇 ВЫКЛ ЗВУК';
-});
+document.addEventListener('click', startDrone, { once: true });
+document.addEventListener('touchstart', startDrone, { once: true });
+document.addEventListener('keydown', startDrone, { once: true });
 </script>
 </body>
 </html>
