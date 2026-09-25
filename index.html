@@ -4,76 +4,137 @@
     <meta charset="UTF-8">
     <title>fsociety</title>
     <style>
+        /* Сброс и база */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
         body {
             background-color: #0d0d0d;
             color: #00ff41;
             font-family: 'Courier New', monospace;
             display: flex;
-            flex-direction: column;
             justify-content: center;
             align-items: center;
             min-height: 100vh;
-            margin: 0;
-            padding: 20px;
-            box-sizing: border-box;
             overflow: hidden;
+            position: relative;
         }
 
-        /* Эффект мерцания всего экрана */
+        /* --- ЭФФЕКТ 1: МЕРЦАНИЕ ВСЕГО ЭКРАНА --- */
         @keyframes flicker {
-            0% { opacity: 1; }
-            5% { opacity: 0.8; }
-            10% { opacity: 1; }
-            15% { opacity: 0.9; }
-            20% { opacity: 1; }
-            50% { opacity: 1; }
-            55% { opacity: 0.7; }
-            60% { opacity: 1; }
+            0%   { opacity: 1; }
+            3%   { opacity: 0.85; }
+            6%   { opacity: 1; }
+            9%   { opacity: 0.95; }
+            12%  { opacity: 1; }
+            50%  { opacity: 1; }
+            53%  { opacity: 0.75; }
+            56%  { opacity: 1; }
             100% { opacity: 1; }
         }
 
-        /* Эффект пульсации свечения */
+        /* --- ЭФФЕКТ 2: ПУЛЬСИРУЮЩЕЕ СВЕЧЕНИЕ --- */
         @keyframes glow {
-            0% { text-shadow: 0 0 5px #00ff41, 0 0 10px #00ff41; }
-            50% { text-shadow: 0 0 20px #00ff41, 0 0 40px #00ff41; }
-            100% { text-shadow: 0 0 5px #00ff41, 0 0 10px #00ff41; }
+            0%   { text-shadow: 0 0 4px #00ff41, 0 0 8px #00ff41; }
+            50%  { text-shadow: 0 0 12px #00ff41, 0 0 24px #00ff41, 0 0 40px #00ff41; }
+            100% { text-shadow: 0 0 4px #00ff41, 0 0 8px #00ff41; }
         }
 
-        /* Эффект печатной машинки для текста */
-        @keyframes typing {
-            from { width: 0; }
-            to { width: 100%; }
+        /* --- ЭФФЕКТ 3: ЛЁГКОЕ «ДЫХАНИЕ» РАЗМЕРА --- */
+        @keyframes breathe {
+            0%   { transform: scale(1); }
+            50%  { transform: scale(1.015); }
+            100% { transform: scale(1); }
         }
 
+        /* --- ЭФФЕКТ 4: БЕГУЩАЯ СТРОКА СКАНИРОВАНИЯ --- */
+        @keyframes scanline {
+            0%   { top: -10%; }
+            100% { top: 110%; }
+        }
+
+        /* Контейнер для арта */
         .container {
-            animation: flicker 3s infinite;
+            position: relative;
+            animation: flicker 4s infinite, breathe 6s ease-in-out infinite;
+            z-index: 1;
         }
 
+        /* Сам арт */
         pre {
-            font-size: 6px;
+            font-size: 7px;
             line-height: 1.0;
             white-space: pre;
             letter-spacing: -1px;
-            animation: glow 2s ease-in-out infinite;
+            text-align: center;
+            animation: glow 2.5s ease-in-out infinite;
+            color: #00ff41;
+            user-select: none;
         }
 
-        .title {
-            font-size: 28px;
-            letter-spacing: 8px;
-            margin-top: 20px;
-            color: #ffffff;
-            overflow: hidden;
-            white-space: nowrap;
-            border-right: 3px solid #00ff41;
-            width: 0;
-            animation: typing 2s steps(8) 1s forwards, glow 2s ease-in-out infinite;
+        /* Бегущая линия сканирования поверх арта */
+        .container::after {
+            content: "";
+            position: absolute;
+            left: 0;
+            width: 100%;
+            height: 40px;
+            background: linear-gradient(
+                to bottom,
+                rgba(0, 255, 65, 0) 0%,
+                rgba(0, 255, 65, 0.15) 50%,
+                rgba(0, 255, 65, 0) 100%
+            );
+            animation: scanline 3.5s linear infinite;
+            pointer-events: none;
+            z-index: 2;
+        }
+
+        /* Затемняющие полосы (эффект ЭЛТ-монитора) */
+        body::before {
+            content: "";
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: repeating-linear-gradient(
+                to bottom,
+                rgba(0, 0, 0, 0) 0px,
+                rgba(0, 0, 0, 0) 2px,
+                rgba(0, 0, 0, 0.25) 3px,
+                rgba(0, 0, 0, 0.25) 4px
+            );
+            pointer-events: none;
+            z-index: 3;
+        }
+
+        /* Лёгкая виньетка по краям */
+        body::after {
+            content: "";
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(
+                ellipse at center,
+                rgba(0, 0, 0, 0) 0%,
+                rgba(0, 0, 0, 0) 60%,
+                rgba(0, 0, 0, 0.6) 100%
+            );
+            pointer-events: none;
+            z-index: 4;
         }
     </style>
 </head>
 <body>
     <div class="container">
         <pre>
-⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿
+⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿
 ⣿⣿⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⣀⣀⣀⣤⣤⣤⣤⣤⣤⣤⣤⣤⣤⣤⣤⣤⣀⣀⡀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⣿⣿
 ⣿⣿⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⢀⣀⣤⣴⣶⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣷⣶⣦⣤⣀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⣿⣿
 ⣿⣿⠀⠀⠀⠀⠀⠀⠀⠀⢀⣠⣴⣾⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣶⣤⣀⠀⠀⠀⠀⠀⠀⠀⠀⣿⣿
@@ -114,8 +175,14 @@
 ⣿⣿⡇⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠙⠻⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⡿⠟⠁⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⣿⣿
 ⣿⣿⡇⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠈⠻⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⡿⠋⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⣿⣿
 ⣿⣿⠇⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠘⣿⣿⣿⣿⣿⣿⣿⠿⠛⠛⠛⠛⠿⣿⣿⣿⣿⣿⣿⣿⡟⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⣿⣿
+⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
+⠀⠀⠀⠀⠀⠀⣰⣶⣶⣶⣶⡆⢠⣴⣾⣷⣶⡄⠀⢀⣴⣾⣿⣶⣄⠀⠀⠀⣠⣶⣾⣷⡆⢰⣶⣶⡆⣴⣶⣶⣶⣶⣆⣶⣶⣶⣶⣶⣶⣶⣶⣆⢀⣶⣶⡶⠀⠀⠀⠀
+⠀⠀⠀⠀⠀⠀⣿⣿⡿⠿⠿⢁⣿⣿⡿⠻⣿⠁⣰⣿⣿⣿⣿⣿⣿⣆⠀⣼⣿⣿⣿⣿⡇⢸⣿⣿⠀⣿⣿⡿⠿⠿⢸⣿⣿⣿⣿⣿⡇⢿⣿⣿⣾⣿⡿⠁⠀⠀⠀⠀
+⠀⠀⠀⠀⠀⠀⣿⣿⣧⣤⡄⠘⣿⣿⣷⣤⡀⢠⣿⣿⡟⠀⠈⣿⣿⣿⢸⣿⣿⠏⠀⠀⠁⣾⣿⣿⢀⣿⣿⣷⣶⡆⠀⠀⣿⣿⡏⠀⠀⠘⣿⣿⣿⡿⠁⠀⠀⠀⠀⠀
+⠀⠀⠀⠀⠀⢸⣿⣿⣿⣿⠇⠀⠈⠛⣿⣿⣿⢸⣿⣿⡇⠀⢠⣿⣿⡏⢸⣿⣿⡀⠀⢀⠀⣿⣿⡇⢸⣿⣿⠿⠿⠇⠀⢰⣿⣿⡇⠀⠀⠀⣿⣿⣿⠁⠀⠀⠀⠀⠀⠀
+⠀⠀⠀⠀⠀⣸⣿⣿⠀⠀⠀⣼⣷⣴⣿⣿⡿⠘⣿⣿⣿⣿⣿⣿⡟⠀⢸⣿⣿⣿⣿⡿⢸⣿⣿⡇⣼⣿⣿⣤⣤⡄⠀⢸⣿⣿⠁⠀⠀⠀⣿⣿⡏⠀⠀⠀⠀⠀⠀⠀
+⠀⠀⠀⠀⠀⣿⣿⡿⠀⠀⠘⠿⢿⣿⡿⠟⠁⠀⠘⠿⣿⣿⠿⠋⠀⠀⠀⠹⢿⣿⡿⠇⢸⣿⣿⠃⣿⣿⣿⣿⣿⠀⠀⣾⣿⣿⠀⠀⠀⢠⣿⣿⡇⠀⠀⠀⠀⠀⠀⠀
         </pre>
-        <div class="title">fsociety</div>
     </div>
 </body>
 </html>
